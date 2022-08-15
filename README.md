@@ -21,4 +21,4 @@ This weather dasboard functions as follows:
 
 Github repository link: https://github.com/BryanBorek/06-Weather-Dashboard
 
-Link to deployed site: 
+Link to deployed site: https://bryanborek.github.io/06-Weather-Dashboard/
