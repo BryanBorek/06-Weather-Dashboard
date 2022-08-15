@@ -4,15 +4,39 @@ var searchInputEl = $('#searchInput');
 var savedCities = $(JSON.parse(localStorage.getItem('savedCities')));
 var APIKey = "e94d4ae885438d091e5594c1c03900ef";
 
+//remove doubles from past searches which calls them to show up as btns
 noDoubles();
 
+function noDoubles() {
+    savedCities.sort();
+    for (var i = 0; i < savedCities.length; i++) {
+        if(savedCities[i] === savedCities[i - 1]) {
+            savedCities.splice(i , 1);
+            i--;
+        }
+    }
+    reSearchBtns();
+}
+
+function reSearchBtns() {
+    pastSearchEl.children().remove();
+    for (var i = 0; i < savedCities.length; i++) {
+        var choiceEl = $('<button>');
+        choiceEl.text(savedCities[i]);
+        choiceEl.attr('id', 'reSearch');
+        choiceEl.addClass('w-100 btn-secondary my-2');
+        pastSearchEl.append(choiceEl);
+    }
+}
+
+//when search button is clicked run fetch() based on user input
 $('#searchBtn').on('click', function(event){
     event.stopPropagation();
     event.stopImmediatePropagation();
 
     var city = $('input[id="searchInput"]').val();
-    var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=imperial";
-    var fiveDayURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey + "&units=imperial";
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=imperial";
+    var fiveDayURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey + "&units=imperial";
 
     fetch(queryURL)
     .then(function(res) {
@@ -21,14 +45,13 @@ $('#searchBtn').on('click', function(event){
     .then(function(data) {
         if(data != undefined) {
             var date = new Date(data.dt * 1000).toLocaleDateString("en-US")
-            var iconURL = 'http://openweathermap.org/img/w/' + data.weather[0].icon + '.png';
+            var iconURL = 'https://openweathermap.org/img/w/' + data.weather[0].icon + '.png';
             $('#oneDayLocationDate').text(data.name + " " + date);
             $('#oneDayIcon').attr('src', iconURL);
             $('#oneDayTemp').text(data.main.temp);
             $('#oneDayWind').text(data.wind.speed);
             $('#oneDayHum').text(data.main.humidity);
             savedCities.push(data.name);
-            //i wasnt to create a for loop to pop items that are doubles
             localStorage.setItem('savedCities', JSON.stringify(savedCities));
             noDoubles();
             $('input[id="searchInput"]').val("");
@@ -48,11 +71,11 @@ $('#searchBtn').on('click', function(event){
             var date3 = new Date(data2.list[16].dt * 1000).toLocaleDateString("en-US");
             var date4 = new Date(data2.list[24].dt * 1000).toLocaleDateString("en-US");
             var date5 = new Date(data2.list[32].dt * 1000).toLocaleDateString("en-US");
-            var iconURL1 = 'http://openweathermap.org/img/w/' + data2.list[0].weather[0].icon + '.png';
-            var iconURL2 = 'http://openweathermap.org/img/w/' + data2.list[8].weather[0].icon + '.png';
-            var iconURL3 = 'http://openweathermap.org/img/w/' + data2.list[16].weather[0].icon + '.png';
-            var iconURL4 = 'http://openweathermap.org/img/w/' + data2.list[24].weather[0].icon + '.png';
-            var iconURL5 = 'http://openweathermap.org/img/w/' + data2.list[32].weather[0].icon + '.png';
+            var iconURL1 = 'https://openweathermap.org/img/w/' + data2.list[0].weather[0].icon + '.png';
+            var iconURL2 = 'https://openweathermap.org/img/w/' + data2.list[8].weather[0].icon + '.png';
+            var iconURL3 = 'https://openweathermap.org/img/w/' + data2.list[16].weather[0].icon + '.png';
+            var iconURL4 = 'https://openweathermap.org/img/w/' + data2.list[24].weather[0].icon + '.png';
+            var iconURL5 = 'https://openweathermap.org/img/w/' + data2.list[32].weather[0].icon + '.png';
    
             $('#dayOneDate').text(date1);
             $('#dayOneIcon').attr('src', iconURL1);
@@ -83,35 +106,15 @@ $('#searchBtn').on('click', function(event){
     })
 });
 
-function noDoubles() {
-    savedCities.sort();
-    for (var i = 0; i < savedCities.length; i++) {
-        if(savedCities[i] === savedCities[i - 1]) {
-            savedCities.splice(i , 1);
-            i--;
-        }
-    }
-    reSearchBtns();
-}
 
-function reSearchBtns() {
-    pastSearchEl.children().remove();
-    for (var i = 0; i < savedCities.length; i++) {
-        var choiceEl = $('<button>');
-        choiceEl.text(savedCities[i]);
-        choiceEl.attr('id', 'reSearch');
-        choiceEl.addClass('w-100 btn-secondary my-2');
-        pastSearchEl.append(choiceEl);
-    }
-}
-
+//when past search button is clicked run fetch() based on the buttons text
 $('#pastSearchContainer').on('click', '#reSearch' , function(event){
     event.stopPropagation();
     event.stopImmediatePropagation();
 
     var city = $(this).text();
-    var currentURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=imperial";
-    var fiveDayURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey + "&units=imperial";
+    var currentURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=imperial";
+    var fiveDayURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey + "&units=imperial";
 
     fetch(currentURL)
     .then(function(res) {
@@ -120,7 +123,7 @@ $('#pastSearchContainer').on('click', '#reSearch' , function(event){
     .then(function(data) {
         if(data != undefined) {
             var date = new Date(data.dt * 1000).toLocaleDateString("en-US")
-            var iconURL = 'http://openweathermap.org/img/w/' + data.weather[0].icon + '.png';
+            var iconURL = 'https://openweathermap.org/img/w/' + data.weather[0].icon + '.png';
             $('#oneDayLocationDate').text(data.name + " " + date);
             $('#oneDayIcon').attr('src', iconURL);
             $('#oneDayTemp').text(data.main.temp);
@@ -144,11 +147,11 @@ $('#pastSearchContainer').on('click', '#reSearch' , function(event){
             var date3 = new Date(data2.list[16].dt * 1000).toLocaleDateString("en-US");
             var date4 = new Date(data2.list[24].dt * 1000).toLocaleDateString("en-US");
             var date5 = new Date(data2.list[32].dt * 1000).toLocaleDateString("en-US");
-            var iconURL1 = 'http://openweathermap.org/img/w/' + data2.list[0].weather[0].icon + '.png';
-            var iconURL2 = 'http://openweathermap.org/img/w/' + data2.list[8].weather[0].icon + '.png';
-            var iconURL3 = 'http://openweathermap.org/img/w/' + data2.list[16].weather[0].icon + '.png';
-            var iconURL4 = 'http://openweathermap.org/img/w/' + data2.list[24].weather[0].icon + '.png';
-            var iconURL5 = 'http://openweathermap.org/img/w/' + data2.list[32].weather[0].icon + '.png';
+            var iconURL1 = 'https://openweathermap.org/img/w/' + data2.list[0].weather[0].icon + '.png';
+            var iconURL2 = 'https://openweathermap.org/img/w/' + data2.list[8].weather[0].icon + '.png';
+            var iconURL3 = 'https://openweathermap.org/img/w/' + data2.list[16].weather[0].icon + '.png';
+            var iconURL4 = 'https://openweathermap.org/img/w/' + data2.list[24].weather[0].icon + '.png';
+            var iconURL5 = 'https://openweathermap.org/img/w/' + data2.list[32].weather[0].icon + '.png';
    
             $('#dayOneDate').text(date1);
             $('#dayOneIcon').attr('src', iconURL1);
