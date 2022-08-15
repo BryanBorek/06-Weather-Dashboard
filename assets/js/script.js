@@ -28,7 +28,7 @@ $('#searchBtn').on('click', function(event){
             savedCities.push(data.name);
             //i wasnt to create a for loop to pop items that are doubles
             localStorage.setItem('savedCities', JSON.stringify(savedCities));
-            reSearchBtns();
+            noDoubles();
         } else {
             return;
         }
@@ -80,6 +80,17 @@ $('#searchBtn').on('click', function(event){
     })
 });
 
+function noDoubles() {
+    savedCities.sort();
+    for (var i = 0; i < savedCities.length; i++) {
+        if(savedCities[i] === savedCities[i - 1]) {
+            savedCities.splice(i , 1);
+            i--;
+        }
+    }
+    reSearchBtns();
+}
+
 function reSearchBtns() {
     pastSearchEl.children().remove();
     for (var i = 0; i < savedCities.length; i++) {
@@ -88,7 +99,7 @@ function reSearchBtns() {
         choiceEl.attr('id', 'reSearch');
         choiceEl.addClass('w-100 btn-primary my-2');
         pastSearchEl.append(choiceEl);
-      }
+    }
 }
 
 $('#pastSearchContainer').on('click', '#reSearch' , function(event){
@@ -113,7 +124,7 @@ $('#pastSearchContainer').on('click', '#reSearch' , function(event){
             $('#oneDayWind').text(data.wind.speed);
             $('#oneDayHum').text(data.main.humidity);          
             localStorage.setItem('savedCities', JSON.stringify(savedCities));
-            reSearchBtns();
+            noDoubles();
         } else {
             return;
         }
