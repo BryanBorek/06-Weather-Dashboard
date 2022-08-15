@@ -4,6 +4,8 @@ var searchInputEl = $('#searchInput');
 var savedCities = $(JSON.parse(localStorage.getItem('savedCities')));
 var APIKey = "e94d4ae885438d091e5594c1c03900ef";
 
+noDoubles();
+
 $('#searchBtn').on('click', function(event){
     event.stopPropagation();
     event.stopImmediatePropagation();
@@ -29,6 +31,7 @@ $('#searchBtn').on('click', function(event){
             //i wasnt to create a for loop to pop items that are doubles
             localStorage.setItem('savedCities', JSON.stringify(savedCities));
             noDoubles();
+            $('input[id="searchInput"]').val("");
         } else {
             return;
         }
@@ -97,7 +100,7 @@ function reSearchBtns() {
         var choiceEl = $('<button>');
         choiceEl.text(savedCities[i]);
         choiceEl.attr('id', 'reSearch');
-        choiceEl.addClass('w-100 btn-primary my-2');
+        choiceEl.addClass('w-100 btn-secondary my-2');
         pastSearchEl.append(choiceEl);
     }
 }
